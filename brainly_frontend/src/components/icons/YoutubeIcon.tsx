@@ -1,7 +1,8 @@
-const YoutubeIcon = () => {
+import { iconSizeVariants, type IconProps } from ".";
+const YoutubeIcon = (props: IconProps) => {
   return (
     <svg
-      className="w-6 h-6"
+      className={iconSizeVariants[props.size]}
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       width="24"

@@ -100,13 +100,14 @@ const Dashboard = () => {
           )}
         </div>
         <div className="flex justify-start gap-2 flex-wrap mt-2">
-          {contents.map(({ _id, title, link, type }) => (
+          {contents.map(({ _id, title, link, type, tags }) => (
             <Card
               key={_id}
               _id={_id}
               type={type}
               link={link}
               title={title}
+              tags={tags}
               refresh={refresh}
             />
           ))}

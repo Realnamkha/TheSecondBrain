@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { BACKEND_URL } from "../../config";
 import axios from "axios";
 import useOutsideClick from "../../hooks/useOutsideClick";
+import Checkbox from "./Checkbox";
 
 // Define ContentType as both a const object and type
 export const ContentType = {
@@ -25,6 +26,17 @@ export function CreateContentModal({
   const linkRef = useRef<HTMLInputElement>(null);
   const [type, setType] = useState<ContentType | "">("");
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState([
+    "Productivity",
+    "Trending",
+    "Health",
+    "Sci-Fi",
+    "Education",
+    "Entertainment",
+  ]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [newCategory, setNewCategory] = useState("");
+
   const handleClickOutside = () => {
     {
       onClose();
@@ -32,6 +44,14 @@ export function CreateContentModal({
   };
 
   const ref = useOutsideClick(handleClickOutside, open);
+  function toggleCategory(category: string) {
+    setSelectedCategories((prev) =>
+      prev.includes(category)
+        ? prev.filter((c) => c !== category)
+        : [...prev, category]
+    );
+    console.log(selectedCategories);
+  }
 
   async function addContent() {
     const title = titleRef.current?.value?.trim();
@@ -51,6 +71,7 @@ export function CreateContentModal({
           title,
           link,
           type,
+          tags: selectedCategories,
         },
         {
           headers: {
@@ -76,7 +97,7 @@ export function CreateContentModal({
       {/* Content */}
       <div
         ref={ref}
-        className="relative z-10 bg-white p-4 rounded-2xl shadow-lg min-w-[400px]"
+        className="relative max-w-96 z-10 bg-white p-4 rounded-2xl shadow-lg min-w-[400px]"
       >
         {/* Close button */}
         <div className="flex justify-end">
@@ -105,6 +126,46 @@ export function CreateContentModal({
             />
           </div>
         </div>
+        <div className="ml-4">
+          <div className="mt-4">
+            <h2>Select your categories</h2>
+          </div>
+          <div className="grid grid-cols-2 gap-4 m-4 px-4">
+            {categories.map((cat) => (
+              <Checkbox
+                key={cat}
+                label={cat}
+                checked={selectedCategories.includes(cat)}
+                onChange={() => toggleCategory(cat)}
+              />
+            ))}
+          </div>
+          <div>
+            <div className="mt-4">
+              <h2>Want to add your own categories</h2>
+              <Input
+                placeholder="Add new category"
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
+              />
+              <div className="ml-2">
+                <Button
+                  size="md"
+                  text="Add"
+                  variant="secondary"
+                  onClick={() => {
+                    const trimmed = newCategory.trim();
+                    if (trimmed && !categories.includes(trimmed)) {
+                      setCategories([...categories, trimmed]);
+                      setNewCategory("");
+                    }
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="flex justify-center mt-4">
           <Button
             onClick={addContent}

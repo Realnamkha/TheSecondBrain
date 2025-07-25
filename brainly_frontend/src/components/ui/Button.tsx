@@ -17,7 +17,7 @@ export interface ButtonProps {
 const variantStyles = new Map<Variants, string>([
   ["transparent", "bg-white tex-red-500"],
   ["primary", "bg-purple-600 text-white"],
-  ["secondary", "bg-purple-300 text-purple-600"],
+  ["secondary", "bg-purple-100 text-purple-600"],
   ["destructive", "bg-red-600 text-white"],
 ]);
 
@@ -42,7 +42,9 @@ export const Button = (props: ButtonProps) => {
       }`}
     >
       {props.text && props.startIcon ? (
-        <div className="pr-2">{props.startIcon}</div>
+        <div className={props.size !== "xm" ? "pr-2" : ""}>
+          {props.startIcon}
+        </div>
       ) : (
         <div>{props.startIcon}</div>
       )}

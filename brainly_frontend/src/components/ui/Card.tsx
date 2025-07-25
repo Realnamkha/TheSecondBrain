@@ -7,12 +7,14 @@ import { Button } from "./Button";
 import { BACKEND_URL } from "../../config";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import TagIcon from "../icons/TagIcon";
 
 interface CardProps {
   _id: string;
   title: string;
   link: string;
   type: "twitter" | "youtube";
+  tags: [];
   refresh: () => void;
 }
 declare global {
@@ -25,7 +27,7 @@ declare global {
   }
 }
 
-export function Card({ _id, title, link, type, refresh }: CardProps) {
+export function Card({ _id, title, link, type, tags, refresh }: CardProps) {
   const navigate = useNavigate();
   const [alertOpen, setAlertOpen] = useState(false);
   useEffect(() => {
@@ -34,25 +36,25 @@ export function Card({ _id, title, link, type, refresh }: CardProps) {
     }
   }, [type, link]);
   return (
-    <div className="max-w-72 max-h-64 overflow-hidden bg-white rounded-md p-4 mb-2 border-2 border-gray-200">
+    <div className="max-w-72 h-fit  bg-white rounded-sm p-4 mb-2 border-2 border-gray-200">
       <div className="flex justify-between">
         <div className="flex items-center">
           <div className="text-gray-500 pr-2">
-            <PlusIcon size="md" />
+            <PlusIcon size="sm" />
           </div>
           <div>{title}</div>
         </div>
         <div className="flex items-center">
           <div className="text-gray-500 pr-2">
             <a href={link} target="_blank">
-              <ShareIcon size="md" />
+              <ShareIcon size="sm" />
             </a>
           </div>
           <div>
             <Button
               size="xm"
               variant="transparent"
-              startIcon={<DeleteIcon size="md" />}
+              startIcon={<DeleteIcon size="sm" />}
               onClick={() => {
                 setAlertOpen(true);
               }}
@@ -60,7 +62,7 @@ export function Card({ _id, title, link, type, refresh }: CardProps) {
           </div>
         </div>
       </div>
-      <div className="pt-4">
+      <div className="pt-4 mb-4">
         {type === "youtube" && (
           <iframe
             className="w-full"
@@ -76,6 +78,16 @@ export function Card({ _id, title, link, type, refresh }: CardProps) {
             <a href={link.replace("x.com", "twitter.com")}></a>
           </blockquote>
         )}
+      </div>
+      <div className="flex flex-wrap justify-start items-center gap-2 text-xs">
+        {tags.map(({ name }) => (
+          <Button
+            size="xm"
+            variant="secondary"
+            text={name}
+            startIcon={<TagIcon size="sm" />}
+          />
+        ))}
       </div>
       <div>
         <AlertModal

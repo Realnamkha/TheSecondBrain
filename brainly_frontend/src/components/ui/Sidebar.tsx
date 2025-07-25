@@ -1,4 +1,7 @@
+import DocumentIcon from "../icons/DocumentIcon";
+import LinkIcon from "../icons/LinkIcon";
 import Logo from "../icons/Logo";
+import TagIcon from "../icons/TagIcon";
 import TwitterIcon from "../icons/TwitterIcon";
 import YoutubeIcon from "../icons/YoutubeIcon";
 import SidebarItems from "./SidebarItems";
@@ -13,8 +16,11 @@ const Sidebar = () => {
         <div>Brainly</div>
       </div>
       <div className="pt-4">
-        <SidebarItems icon={<YoutubeIcon />} text="Youtube" />
-        <SidebarItems icon={<TwitterIcon />} text="Twitter" />
+        <SidebarItems icon={<YoutubeIcon size="md" />} text="Youtube" />
+        <SidebarItems icon={<TwitterIcon size="md" />} text="Twitter" />
+        <SidebarItems icon={<DocumentIcon size="md" />} text="Documents" />
+        <SidebarItems icon={<TagIcon size="md" />} text="Tag" />
+        <SidebarItems icon={<LinkIcon size="md" />} text="Link" />
       </div>
     </div>
   );
