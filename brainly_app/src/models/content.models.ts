@@ -11,7 +11,7 @@ const contentSchema = new Schema({
   },
   type: {
     type: String,
-    enum: ["youtube", "twitter"],
+    enum: ["youtube", "twitter", "google-doc", "document", "reddit"],
   },
   tags: [
     {

@@ -1,29 +1,38 @@
 import { Request, Response } from "express";
 import { contentModel } from "../models/content.models";
+import { tagModel } from "../models/tags.models";
 
 export async function createContent(req: Request, res: Response) {
-  const { title, link, type } = req.body;
+  const { title, link, type, tags } = req.body;
   console.log(req.body);
-
-  const allowedTypes = ["youtube", "twitter"];
-  if (!title || !link || !type || !allowedTypes.includes(type)) {
+  if (!title || !link || !type || !tags) {
     return res.status(400).json({
       message:
-        "Title, link and valid type ('youtube' or 'twitter') are required.",
+        "Title, link and valid type ('youtube' or 'twitter') and Tags are required.",
     });
   }
 
   try {
+    const tagIds = [];
+    for (const tagName of tags) {
+      const normalizedTagName = tagName.toLowerCase().trim();
+
+      let tag = await tagModel.findOne({ name: normalizedTagName });
+
+      if (!tag) {
+        tag = await tagModel.create({ name: normalizedTagName });
+      }
+      tagIds.push(tag._id);
+    }
     await contentModel.create({
       title,
       link,
       type,
+      tags: tagIds,
       userId: req.user._id,
     });
     return res.status(201).json({ message: "content created successful" });
   } catch (error: any) {
-    // Handle validation or casting errors from Mongoose
-    // Mongoose validation errors have error.name === 'ValidationError'
     if (error.name === "ValidationError") {
       return res.status(400).json({ message: error.message });
     }
@@ -38,7 +47,8 @@ export async function getContent(req: Request, res: Response) {
     .find({
       userId: userId,
     })
-    .populate("userId", "username");
+    .populate("userId", "username")
+    .populate("tags", "name");
   res.status(201).json({
     content,
   });
