@@ -29,7 +29,7 @@ const Dashboard = () => {
   return (
     <div>
       <div>
-        <Sidebar />
+        <Sidebar contents={contents} /> ✅
       </div>
       <div className="p-4 ml-56">
         <CreateContentModal

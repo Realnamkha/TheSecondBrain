@@ -8,13 +8,32 @@ import useOutsideClick from "../../hooks/useOutsideClick";
 import Checkbox from "./Checkbox";
 
 // Define ContentType as both a const object and type
-export const ContentType = {
-  Youtube: "youtube",
-  Twitter: "twitter",
-} as const;
-
-type ContentType = (typeof ContentType)[keyof typeof ContentType];
-
+function detectContentType(
+  link: string
+): ContentType | "document" | "google-doc" | "reddit" | "" {
+  if (link.includes("youtube.com") || link.includes("youtu.be")) {
+    return "youtube";
+  } else if (link.includes("twitter.com") || link.includes("x.com")) {
+    return "twitter";
+  } else if (
+    link.endsWith(".pdf") ||
+    link.endsWith(".docx") ||
+    link.endsWith(".doc") ||
+    link.includes("medium.com") ||
+    link.includes("dev.to") ||
+    link.includes("substack.com") ||
+    link.includes("hashnode.com") ||
+    link.includes("blogspot.com") ||
+    link.includes(".app")
+  ) {
+    return "document"; // Treat these as articles/blogs
+  } else if (link.includes("reddit.com")) {
+    return "reddit";
+  } else {
+    return "";
+  }
+}
+type ContentType = "youtube" | "twitter" | "document" | "google-doc" | "reddit";
 export function CreateContentModal({
   open,
   onClose,
@@ -107,24 +126,16 @@ export function CreateContentModal({
         </div>
         <div className="flex flex-col gap-2">
           <Input reference={titleRef} placeholder="title" />
-          <Input reference={linkRef} placeholder="link" />
-        </div>
-        <div>
-          <h2 className="text-center">Please select type</h2>
-          <div className="flex justify-center gap-4 mt-2">
-            <Button
-              variant={type === ContentType.Youtube ? "primary" : "secondary"}
-              size="sm"
-              text={ContentType.Youtube}
-              onClick={() => setType(ContentType.Youtube)}
-            />
-            <Button
-              variant={type === ContentType.Twitter ? "primary" : "secondary"}
-              size="sm"
-              text={ContentType.Twitter}
-              onClick={() => setType(ContentType.Twitter)}
-            />
-          </div>
+          <Input
+            reference={linkRef}
+            placeholder="link"
+            onChange={(e) => {
+              const value = e.target.value;
+              linkRef.current!.value = value;
+              const detected = detectContentType(value);
+              setType(detected);
+            }}
+          />
         </div>
         <div className="ml-4">
           <div className="mt-4">
