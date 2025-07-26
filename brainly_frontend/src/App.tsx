@@ -12,7 +12,10 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/signin" element={<Signin />} />
         <Route path="/" element={<Dashboard />} />
-        <Route path="/share/:shareId" element={<ViewPage />} />
+        <Route path="/twitter" element={<Dashboard filterType="twitter" />} />
+        <Route path="/youtube" element={<Dashboard filterType="youtube" />} />
+        <Route path="/reddit" element={<Dashboard filterType="reddit" />} />
+        <Route path="/view/:shareId" element={<ViewPage />} />
       </Routes>
     </BrowserRouter>
   );

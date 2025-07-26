@@ -10,10 +10,11 @@ import axios from "axios";
 import AlertModal from "../components/ui/AlertModal";
 import { useNavigate } from "react-router-dom";
 
-const Dashboard = () => {
+const Dashboard = ({ filterType }: { filterType?: string }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
   const { contents, refresh } = useContent();
+  const [filteredContents, setFilteredContents] = useState([]);
   const isLoggedIn = Boolean(localStorage.getItem("token"));
   const navigate = useNavigate();
 
@@ -26,10 +27,18 @@ const Dashboard = () => {
   useEffect(() => {
     refresh();
   }, [modalOpen]);
+  useEffect(() => {
+    if (filterType) {
+      setFilteredContents(contents.filter((c) => c.type === filterType));
+    } else {
+      setFilteredContents(contents);
+    }
+  }, [contents, filterType]);
+
   return (
     <div>
       <div>
-        <Sidebar contents={contents} /> ✅
+        <Sidebar /> ✅
       </div>
       <div className="p-4 ml-56">
         <CreateContentModal
@@ -38,7 +47,7 @@ const Dashboard = () => {
             setModalOpen(false);
           }}
         />
-        <div className="flex justify-end gap-4 mr-3">
+        <div className="flex justify-end gap-4 mr-3 mt-[-10px]">
           <Button
             onClick={() => {
               console.log("Opening modal");
@@ -63,6 +72,7 @@ const Dashboard = () => {
                 }
               );
               const shareUrl = `${URL}/view/${response.data?.hash}`;
+              alert("Link copied " + shareUrl);
               copyToClipboard(shareUrl);
             }}
             startIcon={<PlusIcon size="md" />}
@@ -100,7 +110,7 @@ const Dashboard = () => {
           )}
         </div>
         <div className="flex justify-start gap-2 flex-wrap mt-2">
-          {contents.map(({ _id, title, link, type, tags }) => (
+          {filteredContents.map(({ _id, title, link, type, tags }) => (
             <Card
               key={_id}
               _id={_id}

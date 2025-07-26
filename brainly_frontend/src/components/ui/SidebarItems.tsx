@@ -1,36 +1,29 @@
 import type { ReactElement } from "react";
-import { useState } from "react";
+import { Link, useMatch, useResolvedPath } from "react-router-dom";
 
 const SidebarItems = ({
-  contents,
-  icon,
   text,
+  icon,
+  route,
 }: {
-  contents: any;
-  icon: ReactElement;
   text: string;
+  icon: ReactElement;
+  route: string;
 }) => {
-  const [filteredContents, setFilteredContents] = useState([]);
-
-  function filterContent() {
-    const result = contents.filter(
-      (content) => content.type === text.toLowerCase()
-    );
-    setFilteredContents(result);
-  }
+  // Optional: check if this route is active to apply active styles
+  const resolved = useResolvedPath(route);
+  const match = useMatch({ path: resolved.pathname, end: true });
 
   return (
-    <div className="flex pr-4 py-4 pl-8 text-gray-700 cursor-pointer hover:bg-gray-200  transition-all duration-150">
+    <Link
+      to={route}
+      className={`flex pr-4 py-4 pl-8 text-gray-700 cursor-pointer transition-all duration-150 ${
+        match ? "bg-gray-300 font-semibold" : "hover:bg-gray-200"
+      }`}
+    >
       <div className="pr-2">{icon}</div>
-      <div
-        className=""
-        onClick={() => {
-          filterContent();
-        }}
-      >
-        {text}
-      </div>
-    </div>
+      <div>{text}</div>
+    </Link>
   );
 };
 

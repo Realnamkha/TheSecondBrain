@@ -1,51 +1,55 @@
+import axios from "axios";
 import { Card } from "../components/ui/Card";
-import { PlusIcon } from "../components/icons/PlusIcon";
-import { Button } from "../components/ui/Button";
 import { CreateContentModal } from "../components/ui/CreateContentModal";
 import { useEffect, useState } from "react";
 import Sidebar from "../components/ui/Sidebar";
 import { BACKEND_URL } from "../config";
+import { useParams } from "react-router-dom";
 
 const ViewPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
-  useEffect(() => {
-    axios.get(`${BACKEND_URL}/view/${shareLink}`);
-  }, []);
+  const { shareId } = useParams<{ shareId: string }>();
+  const [contents, setContents] = useState([]);
 
-  useEffect(() => {}, [modalOpen]);
+  useEffect(() => {
+    axios
+      .get(`${BACKEND_URL}/api/v1/view/${shareId}`)
+      .then((response) => {
+        setContents(response.data?.content);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch content:", error);
+      });
+  }, [shareId]);
+
+  // Log contents after state updates
+  useEffect(() => {
+    console.log(contents);
+  }, [contents]);
+
   return (
     <div>
-      <div>
-        <Sidebar />
-      </div>
+      <Sidebar />
       <div className="p-4 ml-56">
         <CreateContentModal
           open={modalOpen}
-          onClose={() => {
-            setModalOpen(false);
-          }}
+          onClose={() => setModalOpen(false)}
         />
-        <div className="flex justify-end gap-4">
-          <Button
-            startIcon={<PlusIcon size="sm" />}
-            variant="primary"
-            size="sm"
-            text="Add Content"
-          />
-          <Button
-            startIcon={<PlusIcon size="md" />}
-            variant="secondary"
-            size="md"
-            text="Share"
-          />
-        </div>
         <div className="flex justify-start gap-2 flex-wrap mt-2">
-          {contents.map(({ title, link, type }) => (
-            <Card type={type} link={link} title={title} />
+          {contents.map(({ _id, title, link, type, tags }) => (
+            <Card
+              key={_id}
+              _id={_id}
+              type={type}
+              link={link}
+              title={title}
+              tags={tags}
+            />
           ))}
         </div>
       </div>
     </div>
   );
 };
+
 export default ViewPage;

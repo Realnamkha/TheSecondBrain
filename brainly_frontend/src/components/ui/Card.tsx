@@ -18,7 +18,7 @@ interface CardProps {
   link: string;
   type: string;
   tags: { name: string }[];
-  refresh: () => void;
+  refresh?: () => void;
 }
 declare global {
   interface Window {
@@ -151,7 +151,7 @@ export function Card({ _id, title, link, type, tags, refresh }: CardProps) {
                 Authorization: localStorage.getItem("token"),
               },
             });
-            refresh();
+            refresh?.();
             navigate("/");
           }}
         />
